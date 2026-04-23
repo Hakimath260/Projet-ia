@@ -226,66 +226,13 @@ Le canal ThingSpeak Results a bien reçu la nouvelle entrée produite par MATLAB
 - [ ] Raccorder la carte STM32 à cette chaîne cloud
 - [ ] Envoyer les vraies mesures de capteurs depuis la carte
 - [ ] Remplacer la règle MATLAB simple par la vraie logique IA (modèle ONNX)
-- [ ] Ajouter TalkBack pour le retour cloud → carte (optionnel)
+- [ ] Ajouter TalkBack pour le retour cloud → carte
 
 ---
 
 ## 🎤 Guide de démonstration (Soutenance)
 
-> Objectif : montrer l'essentiel en **~1 minute par fonctionnalité**.
-
-### Démo 1 — Envoi de données vers le cloud *(~60 s)*
-
-```bash
-cd cloud/thingspeak
-python3 03_prepare_demo_samples.py
-```
-
-Montrer les lignes envoyées dans le terminal, puis le canal **Raw Data** qui se met à jour.
-
-> *"Ici nous simulons l'envoi de mesures vers ThingSpeak. Dans la version finale, ces données viendront de la STM32."*
-
----
-
-### Démo 2 — Lecture du canal depuis Python *(~60 s)*
-
-```bash
-python3 02_read_channel.py
-```
-
-Montrer le tableau des dernières lignes du canal.
-
-> *"On vérifie que le canal cloud contient bien les dernières mesures et qu'elles sont relisibles par une application externe."*
-
----
-
-### Démo 3 — Analyse MATLAB côté cloud *(~60 s)*
-
-Dans ThingSpeak, ouvrir **MATLAB Analysis** puis cliquer sur **Run**.
-
-Montrer le script MATLAB et la sortie avec les moyennes calculées.
-
-> *"Les données sont ensuite traitées côté cloud avec MATLAB Analysis. Ici nous calculons des statistiques simples sur les derniers points reçus."*
-
----
-
-### Démo 4 — Résultat de classification dans le second canal *(~60 s)*
-
-Dans ThingSpeak, ouvrir le canal **Results** et montrer :
-
-| Champ | Valeur |
-|-------|--------|
-| `PredictedClass` | ✅ |
-| `Confidence` | ✅ |
-| `TempMean` | ✅ |
-| `HumidityMean` | ✅ |
-| `PressureMean` | ✅ |
-
-> *"Le résultat du traitement cloud est ensuite écrit dans un second canal. Cela représente la sortie du système avant le futur raccordement à la carte."*
-
----
-
-### ⚡ Version ultra-compacte (si temps limité)
+### ⚡ Version courte
 
 ```bash
 python3 03_prepare_demo_samples.py
