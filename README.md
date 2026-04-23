@@ -1,88 +1,248 @@
-# 🌤️ Projet IA Embarquée — Partie IA Hors Carte
+# 🤖 Projet IA Embarquée — Classification Météo sur STM32
 
 ![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-Keras-orange?logo=tensorflow)
 ![ONNX](https://img.shields.io/badge/Export-ONNX-lightgrey?logo=onnx)
+![ThingSpeak](https://img.shields.io/badge/Cloud-ThingSpeak-blue)
+![MATLAB](https://img.shields.io/badge/Analyse-MATLAB-orange?logo=mathworks)
+![STM32](https://img.shields.io/badge/Embarqué-STM32-brightgreen)
 ![Status](https://img.shields.io/badge/Status-En%20cours-yellow)
 
 ---
 
 ## 📋 Sommaire
 
-- [Contexte](#-contexte)
-- [Objectifs](#-objectifs)
-- [Fonctionnalités implémentées](#-fonctionnalités-implémentées)
+- [Présentation générale](#-présentation-générale)
+- [Schéma global du projet](#-schéma-global-du-projet)
+- [État actuel du projet](#-état-actuel-du-projet)
+- [Ce qui fonctionne / ce qui reste](#-ce-qui-fonctionne--ce-qui-reste)
+- [Répartition du travail](#-répartition-du-travail)
 - [Arborescence du projet](#-arborescence-du-projet)
-- [Pipeline complet](#-pipeline-complet)
-- [Choix de modélisation](#-choix-de-modélisation)
-- [Résultats obtenus](#-résultats-obtenus)
-- [Export et interopérabilité](#-export-et-interopérabilité)
-- [Installation & Exécution](#-installation--exécution)
-- [État du projet](#-état-du-projet)
-- [Guide de démonstration](#-guide-de-démonstration)
+- [Pipeline de fonctionnement](#-pipeline-de-fonctionnement)
+- [Démonstration soutenance](#-démonstration-possible-à-la-soutenance)
+- [Perspectives](#-perspectives)
 
 ---
 
-## 🧭 Contexte
+## 🧭 Présentation générale
 
-Ce dépôt contient l'avancement de la **partie IA hors carte** de notre projet d'IA embarquée.  
-L'objectif est de construire une chaîne complète de traitement **avant intégration sur STM32** :
+Ce dépôt regroupe le travail réalisé dans le cadre de notre **projet d'IA embarquée**.  
+L'objectif global est de mettre en place une chaîne complète permettant de :
 
-1. Récupération de données météo historiques avec **Meteostat**
-2. Préparation d'un dataset exploitable pour la classification
-3. Entraînement de plusieurs modèles **TensorFlow/Keras**
-4. Comparaison des architectures selon le compromis **accuracy / taille / pertinence embarquée**
-5. Export du meilleur modèle au format **ONNX**
-6. Validation d'une inférence locale en **TensorFlow** et en **ONNX Runtime**
+1. **Récupérer des données météo** (réelles ou simulées)
+2. **Les préparer et les exploiter** dans une pipeline IA
+3. **Entraîner un modèle de classification météo**
+4. **Exporter ce modèle** vers un format exploitable pour l'embarqué
+5. **Mettre en place une partie cloud** avec **ThingSpeak / MATLAB**
+6. **Intégrer le système final sur carte STM32**
 
-Cette partie constitue la base logicielle qui sera ensuite raccordée au **Cloud** (ThingSpeak / MATLAB), puis à la **carte STM32** pour l'inférence embarquée.
-
----
-
-## 🎯 Objectifs
-
-- Créer un dataset météo réaliste à partir de données ouvertes
-- Définir des **classes météo** cohérentes
-- Entraîner un premier modèle simple mais robuste
-- Comparer plusieurs variantes pour justifier le choix final
-- Préparer l'interopérabilité **Cloud / Edge** via **ONNX**
-- Disposer d'une brique IA démontrable même sans carte réseau/capteurs finalisés
+À ce stade, le projet est déjà bien avancé sur les parties :
+- ✅ **IA hors carte**
+- ✅ **Cloud hors carte**
+- ✅ **Organisation du dépôt et documentation**
+- 🔜 **Intégration embarquée finale sur STM32**
 
 ---
 
-## ✅ Fonctionnalités implémentées
+## 🏗️ Schéma global du projet
 
-| # | Fonctionnalité | Description |
-|---|----------------|-------------|
-| 1 | **Téléchargement Meteostat** | Récupération de données météo horaires depuis une station proche de Chambéry |
-| 2 | **Préparation du dataset** | Extraction, nettoyage et transformation des colonnes utiles |
-| 3 | **Construction des labels météo** | Classification des observations en classes météo cohérentes |
-| 4 | **Entraînement d'un baseline** | Premier modèle dense simple sous TensorFlow/Keras |
-| 5 | **Comparaison d'architectures** | Étude du compromis performance / taille entre plusieurs modèles |
-| 6 | **Export ONNX** | Export du modèle final pour réutilisation cloud et embarquée |
-| 7 | **Validation de l'inférence** | Test croisé TensorFlow ↔ ONNX Runtime — même classe prédite ✔️ |
+```
+Meteostat / Capteurs STM32
+          │
+          ▼
+  Prétraitement Python
+          │
+          ▼
+   Modèle TensorFlow
+          │
+          ▼
+      Export ONNX
+          │
+          ▼
+Cloud ThingSpeak / MATLAB
+          │
+          ▼
+ Résultat de classification
+          │
+          ▼
+  Intégration STM32 (à venir)
+```
+
+---
+
+## 📊 État actuel du projet
+
+### 🤖 Partie IA
+
+- [x] Récupération de données météo via Meteostat
+- [x] Constitution d'un dataset exploitable
+- [x] Préparation et nettoyage des données
+- [x] Définition d'une tâche de classification météo
+- [x] Entraînement d'un premier modèle de base
+- [x] Comparaison de plusieurs architectures
+- [x] Sélection d'un meilleur modèle final
+- [x] Export du modèle au format ONNX
+- [x] Test d'inférence et vérification de cohérence TensorFlow ↔ ONNX
+
+### ☁️ Partie Cloud
+
+- [x] Création et configuration des channels ThingSpeak
+- [x] Envoi de données simulées vers un channel Raw Data
+- [x] Lecture des dernières entrées du channel depuis Python
+- [x] Exploitation côté MATLAB Analysis
+- [x] Publication du résultat de classification dans un channel Results
+
+### 📁 Partie Documentation / Dépôt
+
+- [x] Structuration propre du dépôt Git
+- [x] Séparation claire entre données, scripts ML, cloud, résultats et documentation
+- [x] Documentation progressive pour la soutenance et la reprise du projet
+
+### 🔌 Partie Embarquée
+
+- [x] Chaîne Edge AI préparée conceptuellement
+- [ ] Intégration complète sur STM32 (en cours)
+- [ ] Lecture réelle des capteurs
+- [ ] Connectivité réseau depuis la carte
+
+---
+
+## ✅ Ce qui fonctionne / ce qui reste
+
+### ✅ Ce qui fonctionne déjà
+
+**1) Pipeline IA hors carte**
+- Téléchargement des données Meteostat
+- Préparation du dataset
+- Visualisation de la distribution des classes
+- Entraînement d'un modèle baseline
+- Comparaison de plusieurs modèles
+- Choix d'un meilleur modèle
+- Export au format `.onnx`
+- Test d'inférence validé ✔️
+
+**2) Pipeline Cloud hors carte**
+- Channel ThingSpeak Raw opérationnel
+- Envoi de données météo simulées via Python
+- Lecture des dernières données du channel
+- Traitement via MATLAB Analysis
+- Publication d'un résultat sur le channel ThingSpeak Results ✔️
+
+**3) Résultats exploitables pour la soutenance**
+- Courbes d'entraînement disponibles
+- Matrice de confusion disponible
+- Métriques sauvegardées
+- Modèle final sauvegardé
+- Format ONNX généré
+- Démonstration logicielle faisable sans dépendre de la carte ✔️
+
+### 🔜 Ce qui reste à finaliser
+
+**1) Partie embarquée / carte STM32**
+- Lecture effective des capteurs sur la carte
+- Intégration complète du modèle dans la chaîne embarquée
+- Exécution locale de l'inférence sur la carte
+- Validation des sorties embarquées
+
+**2) Partie réseau embarqué**
+- Obtention fiable d'une adresse IP via le DHCP de l'université
+- Stabilisation de la communication réseau depuis la carte
+- Envoi direct des données de la carte vers le cloud
+
+**3) Intégration bout-en-bout finale**
+- Capteur → STM32 → réseau → cloud → résultat
+- Démonstration complète avec données réelles issues du matériel
+
+---
+
+## 👥 Répartition du travail
+
+Le projet est réalisé par trois étudiants issus de **deux formations complémentaires**, ce qui reflète directement la séparation naturelle des responsabilités dans le projet :
+
+| Membre | Formation | Domaine de responsabilité |
+|--------|-----------|--------------------------|
+| **Ait Hamou Hakim** | L3 TRI | Infrastructure réseau, Cloud & Pipeline IA |
+| **Benmansour Omar** | L3 TRI | Infrastructure réseau, Cloud & Pipeline IA |
+| **Chaize Quentin** | L3 ESET | Électronique & Systèmes embarqués (STM32) |
+
+---
+
+### 🌐 Ait Hamou Hakim — L3 TRI
+
+**Responsabilités principales :** pipeline IA, architecture logicielle et intégration cloud.
+
+- Conception de l'architecture globale du projet
+- Création et organisation de l'arborescence Git
+- Récupération et préparation des données Meteostat
+- Écriture des scripts ML (téléchargement, préparation, entraînement)
+- Travail sur la connectivité réseau depuis la STM32 (obtention IP, protocole HTTP)
+- Développement et test des scripts Python d'envoi vers ThingSpeak
+- Comparaison des architectures et sélection du modèle final
+- Export ONNX et test d'inférence croisée TensorFlow ↔ ONNX
+- Mise en place du code MATLAB Analysis côté cloud
+- Production de la documentation technique et préparation de la soutenance
+
+---
+
+### 🌐 Benmansour Omar — L3 TRI
+
+**Responsabilités principales :** infrastructure réseau, scripts cloud et communication carte ↔ cloud.
+
+- Participation à la conception de l'architecture réseau du projet
+- Développement et test des scripts Python d'envoi vers ThingSpeak
+- Mise en place du script de lecture et de vérification du channel Raw Data
+- Préparation des échantillons de démonstration (`03_prepare_demo_samples.py`)
+- Configuration réseau et gestion des clés API ThingSpeak
+- Contribution à la stabilisation de la communication réseau embarquée
+- Appui sur la future intégration STM32 → réseau → cloud
+
+---
+
+### 🔌 Chaize Quentin — L3 ESET
+
+**Responsabilités principales :** électronique, systèmes embarqués et intégration STM32.
+
+- Prise en charge de la partie matérielle du projet (carte STM32)
+- Sélection et câblage des capteurs météo (température, humidité, pression…)
+- Développement du firmware embarqué pour la lecture des capteurs
+- Préparation de l'intégration du modèle ONNX sur la carte
+- Coordination avec l'équipe TRI pour le raccordement STM32 → cloud
+- Tests matériels et validation des données issues des capteurs
+- Contribution à la démonstration finale du système complet
 
 ---
 
 ## 📁 Arborescence du projet
 
 ```text
-.
-├── README.md
+Projet-ia/
+├── cloud/
+│   ├── docs/
+│   │   └── cloud_pipeline.md
+│   └── thingspeak/
+│       ├── 01_send_simulated_data.py
+│       ├── 02_read_channel.py
+│       ├── 03_prepare_demo_samples.py
+│       ├── config_example.py
+│       ├── config.py
+│       └── matlab_analysis_code.md
+│
 ├── data/
-│   ├── raw/
-│   │   └── meteostat_chambery_hourly.csv
+│   ├── external/
 │   ├── processed/
 │   │   └── weather_4classes.csv
-│   └── external/
+│   └── raw/
+│       └── meteostat_chambery_hourly.csv
+│
 ├── docs/
 │   └── ia_pipeline.md
+│
 ├── ml/
 │   ├── models/
-│   │   ├── weather_model_3classes.keras
-│   │   ├── weather_model_final.keras
 │   │   ├── scaler_mean.npy
-│   │   └── scaler_scale.npy
+│   │   ├── scaler_scale.npy
+│   │   ├── weather_model_3classes.keras
+│   │   └── weather_model_final.keras
 │   ├── notebooks/
 │   ├── onnx/
 │   │   └── weather_model_final.onnx
@@ -93,207 +253,113 @@ Cette partie constitue la base logicielle qui sera ensuite raccordée au **Cloud
 │       ├── 04_compare_models.py
 │       ├── 05_export_onnx.py
 │       └── 06_inference_test.py
-└── results/
-    ├── confusion_matrices/
-    │   └── baseline_3classes_cm.npy
-    ├── figures/
-    │   ├── class_distribution.png
-    │   ├── baseline_3classes_accuracy.png
-    │   └── baseline_3classes_loss.png
-    └── metrics/
-        ├── baseline_3classes_accuracy.txt
-        ├── baseline_3classes_report.json
-        ├── model_comparison.csv
-        └── best_model.json
+│
+├── results/
+│   ├── confusion_matrices/
+│   │   └── baseline_3classes_cm.npy
+│   ├── figures/
+│   │   ├── baseline_3classes_accuracy.png
+│   │   ├── baseline_3classes_loss.png
+│   │   └── class_distribution.png
+│   └── metrics/
+│       ├── baseline_3classes_accuracy.txt
+│       ├── baseline_3classes_report.json
+│       ├── best_model.json
+│       └── model_comparison.csv
+│
+└── README.md
 ```
 
-### Rôle des dossiers
+### Description des dossiers
 
-| Dossier | Rôle |
-|---------|------|
-| `data/raw/` | Données brutes Meteostat, sans transformation |
-| `data/processed/` | Données nettoyées, prêtes pour l'apprentissage |
-| `data/external/` | Jeux de données complémentaires éventuels |
-| `docs/` | Pipeline IA, architecture, notes de conception, préparation soutenance |
-| `ml/scripts/` | Scripts Python exécutables du pipeline |
-| `ml/models/` | Modèles entraînés et paramètres de normalisation |
-| `ml/onnx/` | Exports ONNX du modèle final |
-| `ml/notebooks/` | Expérimentations interactives et visualisations |
-| `results/figures/` | Graphiques : répartition des classes, courbes accuracy/loss |
-| `results/metrics/` | Métriques chiffrées : accuracy, rapport de classification, comparaison |
-| `results/confusion_matrices/` | Matrices de confusion pour l'analyse des erreurs |
+| Dossier / Fichier | Rôle |
+|-------------------|------|
+| `cloud/docs/` | Documentation de la chaîne cloud |
+| `cloud/thingspeak/` | Scripts Python et code MATLAB pour ThingSpeak |
+| `data/raw/` | Données météo brutes Meteostat |
+| `data/processed/` | Dataset nettoyé et structuré pour l'apprentissage |
+| `data/external/` | Données complémentaires éventuelles |
+| `docs/` | Documentation générale du projet |
+| `ml/models/` | Modèles Keras entraînés et paramètres de normalisation |
+| `ml/onnx/` | Modèle exporté au format ONNX |
+| `ml/scripts/` | Scripts Python de la pipeline IA |
+| `ml/notebooks/` | Notebooks Jupyter pour expérimentations |
+| `results/figures/` | Courbes d'entraînement et répartition des classes |
+| `results/metrics/` | Métriques chiffrées et comparaison des modèles |
+| `results/confusion_matrices/` | Matrices de confusion sauvegardées |
 
 ---
 
-## 🔄 Pipeline complet
+## 🔄 Pipeline de fonctionnement
 
 ```
-[1] Téléchargement des données brutes (Meteostat)
+[1] Téléchargement des données météo (Meteostat)       ← L3 TRI
         ↓
-[2] Nettoyage et préparation
+[2] Préparation / nettoyage des données (Python)       ← L3 TRI
         ↓
-[3] Création des classes météo
+[3] Entraînement et comparaison des modèles (Keras)    ← L3 TRI
         ↓
-[4] Entraînement d'un baseline
+[4] Export du modèle final (ONNX)                      ← L3 TRI
         ↓
-[5] Comparaison de plusieurs modèles
+[5] Envoi de données vers ThingSpeak (Python)          ← L3 TRI
         ↓
-[6] Choix d'un modèle final
+[6] Lecture et traitement des données (MATLAB)         ← L3 TRI
         ↓
-[7] Export ONNX
+[7] Publication du résultat (ThingSpeak Results)       ← L3 TRI
         ↓
-[8] Validation de l'inférence TensorFlow / ONNX ✅
-```
-
-### Rôle de chaque script
-
-| Script | Rôle |
-|--------|------|
-| `01_download_meteostat.py` | Identifie une station, vérifie l'inventaire, récupère et sauvegarde les données horaires |
-| `02_prepare_dataset.py` | Sélectionne les colonnes, nettoie les valeurs manquantes, construit les labels, génère les graphiques |
-| `03_train_baseline.py` | Charge le dataset, enlève la classe `fog`, normalise, entraîne et sauvegarde le modèle baseline |
-| `04_compare_models.py` | Entraîne plusieurs variantes, compare accuracy et taille, sélectionne le meilleur modèle |
-| `05_export_onnx.py` | Exporte le modèle final en `.onnx` pour une utilisation cloud et embarquée |
-| `06_inference_test.py` | Teste une inférence croisée TensorFlow ↔ ONNX Runtime sur un exemple simulé |
-
----
-
-## 🧠 Choix de modélisation
-
-### Features utilisées
-
-| Feature | Description |
-|---------|-------------|
-| `temp` | Température |
-| `rhum` | Humidité relative |
-| `pres` | Pression atmosphérique |
-| `wspd` | Vitesse du vent |
-| `prcp` | Précipitations |
-
-Ces variables sont directement interprétables, pertinentes pour une classification météo simple et proches des mesures exploitées par le système final.
-
-### Classes météo
-
-Le dataset contient initialement **4 classes** :
-
-| Label | Classe |
-|-------|--------|
-| `0` | ☀️ clear |
-| `1` | ☁️ cloudy |
-| `2` | 🌧️ rain |
-| `3` | 🌫️ fog |
-
-> ⚠️ La classe `fog` étant très fortement sous-représentée, elle a été exclue pour le baseline afin d'obtenir un premier modèle robuste sur **3 classes**.
-
----
-
-## 📊 Résultats obtenus
-
-### Baseline 3 classes
-
-| Métrique | Valeur |
-|----------|--------|
-| Accuracy test | **~78.6 %** |
-| Meilleure classe | `cloudy` |
-| Classe la plus difficile | `clear` (souvent confondue avec `cloudy`) |
-
-### Comparaison des architectures
-
-| Modèle | Accuracy | Taille | Usage recommandé |
-|--------|----------|--------|-----------------|
-| `small_relu` | ✔️ compétitif | 🟢 très léger | **Edge / STM32** |
-| `baseline_relu` | ✔️ bon | 🟡 moyen | Référence |
-| `bigger_relu` | 🏆 meilleure | 🔴 plus lourd | **Cloud** |
-| `tanh_model` | ✔️ correct | 🟡 moyen | Alternative |
-| `baseline_relu_rmsprop` | ✔️ correct | 🟡 moyen | Alternative |
-
-> 💡 **Conclusion** : `bigger_relu` offre la meilleure accuracy brute (candidat cloud), tandis que `small_relu` offre le meilleur compromis taille/performance (candidat edge).
-
----
-
-## 📦 Export et interopérabilité
-
-Le modèle final est disponible en deux formats :
-
-| Format | Fichier | Usage |
-|--------|---------|-------|
-| Keras | `weather_model_final.keras` | Entraînement / fine-tuning Python |
-| ONNX | `weather_model_final.onnx` | Cloud, MATLAB, embarqué |
-
-L'export ONNX permet une interopérabilité complète entre Python/TensorFlow, ONNX Runtime, MATLAB et les outils de conversion pour l'embarqué.
-
-**Résultat de validation :**
-```
-Même classe TensorFlow / ONNX : True ✅
+[8] Intégration sur STM32 + lecture capteurs           ← L3 ESET
+        ↓
+[9] Démo complète : capteur → carte → cloud → résultat ← Équipe complète
 ```
 
 ---
 
-## 🚀 Installation & Exécution
+## 🎤 Démonstration possible à la soutenance
 
-### 1. Installation des dépendances
+Même sans carte complètement finalisée, une démonstration cohérente et stable est déjà possible.
+
+### Démo
+
+1. Montrer le dépôt Git et l'arborescence
+2. Exécuter (ou montrer les résultats de) la pipeline IA
+3. Montrer les graphiques et métriques
+4. Envoyer des données simulées vers ThingSpeak
+5. Montrer la lecture du channel Raw Data
+6. Montrer le résultat calculé côté MATLAB / channel Results
+7. Conclure sur la future intégration STM32
+
+### Commandes clés
 
 ```bash
-pip install meteostat pandas numpy matplotlib scikit-learn tensorflow tf2onnx onnx onnxruntime
-```
-
-### 2. Exécution du pipeline complet
-
-```bash
-python3 ml/scripts/01_download_meteostat.py
-python3 ml/scripts/02_prepare_dataset.py
-python3 ml/scripts/03_train_baseline.py
-python3 ml/scripts/04_compare_models.py
-python3 ml/scripts/05_export_onnx.py
-python3 ml/scripts/06_inference_test.py
-```
-
----
-
-## 📌 État du projet
-
-### ✅ Validé
-
-- [x] Récupération des données Meteostat
-- [x] Préparation du dataset
-- [x] Construction des labels météo
-- [x] Entraînement d'un baseline
-- [x] Comparaison d'architectures
-- [x] Choix d'un modèle final
-- [x] Export ONNX
-- [x] Test d'inférence locale TensorFlow / ONNX
-
-### 🔜 Reste à intégrer
-
-- [ ] Lecture des données réelles depuis la carte STM32
-- [ ] Transmission réseau / cloud depuis la carte
-- [ ] Raccordement entre acquisition embarquée et modèle final
-- [ ] Démonstration temps réel complète : capteurs → cloud → inférence → retour carte
-
----
-
-## 🎤 Guide de démonstration (Soutenance)
-
-> Objectif : montrer un maximum de choses en **5 minutes**, avec une logique simple, visuelle et fluide.
-
-### ⚡ Version rapide
-
-```bash
+# Pipeline IA
 python3 ml/scripts/02_prepare_dataset.py
 python3 ml/scripts/04_compare_models.py
 python3 ml/scripts/06_inference_test.py
+
+# Pipeline Cloud
+cd cloud/thingspeak
+python3 03_prepare_demo_samples.py
+python3 02_read_channel.py
 ```
 
-> *"Dataset météo réel Meteostat → comparaison de modèles → export ONNX validé."*
+---
+
+## 🚀 Perspectives
+
+- 🔌 Connexion stable de la carte STM32 au réseau universitaire
+- 📡 Lecture réelle des capteurs météo depuis la carte
+- ⚡ Exécution du modèle ONNX directement sur la STM32
+- 🎯 Démonstration complète : **capteur → carte → cloud → classification**
 
 ---
 
 ## 🏁 Conclusion
 
-Cette partie du projet démontre que la **chaîne IA fonctionne de manière cohérente hors carte**.  
-Elle fournit une base solide pour la suite :
+Le projet dispose déjà :
 
-- 🌐 Intégration cloud
-- 🔌 Intégration sur STM32
-- ⚡ Inférence embarquée
-- 🎯 Démonstration finale complète
+- ✅ D'une **pipeline IA fonctionnelle** (données → modèle → ONNX → inférence)
+- ✅ D'une **pipeline cloud fonctionnelle** (ThingSpeak → MATLAB → résultats)
+- ✅ D'une **organisation Git propre** et d'une documentation complète
+- ✅ D'une **base solide pour la soutenance**, démontrable sans dépendre de la carte
+
+La partie restant à finaliser concerne l'**intégration embarquée réelle sur STM32**, portée par Quentin Chaize (L3 ESET), qui viendra compléter la chaîne déjà bien avancée côté logiciel et cloud par l'équipe TRI.
