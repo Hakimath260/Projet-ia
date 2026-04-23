@@ -1,4 +1,3 @@
-pip install meteostat pandas numpy scikit-learn matplotlib tensorflow tf2onnx onnx
 from meteostat import Point, Hourly
 from datetime import datetime
 import pandas as pd
